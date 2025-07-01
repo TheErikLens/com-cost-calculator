@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Hidden Cost of Poor Communication - Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #0d0d0d;
+            color: #fdfdfd;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            flex: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #fdfdfd;
+        }
+
+        .header .highlight {
+            color: #a1ff75;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #b0b0b0;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .calculator-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+
+        .input-section, .results-section {
+            background: #1a1a1a;
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid #333;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #a1ff75;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #fdfdfd;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 0.75rem;
+            background: #0d0d0d;
+            border: 2px solid #333;
+            border-radius: 8px;
+            color: #fdfdfd;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #a1ff75;
+        }
+
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .toggle {
+            position: relative;
+            width: 50px;
+            height: 25px;
+            background: #333;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle.active {
+            background: #a1ff75;
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 21px;
+            height: 21px;
+            background: #fdfdfd;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle.active::after {
+            transform: translateX(25px);
+        }
+
+        .results-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .result-item {
+            background: #0d0d0d;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #a1ff75;
+        }
+
+        .result-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #a1ff75;
+            margin-bottom: 0.25rem;
+        }
+
+        .result-label {
+            color: #b0b0b0;
+            font-size: 0.9rem;
+        }
+
+        .comparison-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #333;
+        }
+
+        .comparison-item {
+            background: #0d0d0d;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .warning-box {
+            background: rgba(161, 255, 117, 0.1);
+            border: 1px solid #a1ff75;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .warning-box h3 {
+            color: #a1ff75;
+            margin-bottom: 1rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid #333;
+            margin-top: auto;
+        }
+
+        .footer a {
+            color: #a1ff75;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s ease;
+        }
+
+        .footer a:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>The <span class="highlight">$107,000</span> Hidden Cost</h1>
+            <p>Calculate exactly how much poor communication is costing your business</p>
+        </div>
+
+        <div class="calculator-grid">
+            <div class="input-section">
+                <h2 class="section-title">Input Your Data</h2>
+                
+                <div class="input-group">
+                    <label for="dailyWaste">Daily time lost per person (minutes)</label>
+                    <input type="number" id="dailyWaste" value="5" min="0" max="480">
+                </div>
+
+                <div class="input-group">
+                    <label for="hourlyRate">Average hourly cost per employee ($)</label>
+                    <input type="number" id="hourlyRate" value="65" min="0" step="0.01">
+                </div>
+
+                <div class="input-group">
+                    <label for="numPeople">Number of people affected</label>
+                    <input type="number" id="numPeople" value="25" min="1">
+                </div>
+
+                <div class="input-group">
+                    <label for="workingDays">Working days per year</label>
+                    <input type="number" id="workingDays" value="250" min="1" max="365">
+                </div>
+
+                <div class="input-group">
+                    <label for="industry">Industry type</label>
+                    <select id="industry">
+                        <option value="1.0">General Business</option>
+                        <option value="1.3">Technology/Software</option>
+                        <option value="1.2">Consulting/Professional Services</option>
+                        <option value="1.1">Finance/Insurance</option>
+                        <option value="0.9">Manufacturing</option>
+                        <option value="1.4">Healthcare</option>
+                    </select>
+                </div>
+
+                <div class="toggle-group">
+                    <span>Include escalation multiplier</span>
+                    <div class="toggle active" id="escalationToggle"></div>
+                </div>
+
+                <div class="toggle-group">
+                    <span>Include opportunity cost</span>
+                    <div class="toggle" id="opportunityToggle"></div>
+                </div>
+            </div>
+
+            <div class="results-section">
+                <h2 class="section-title">The Damage</h2>
+                
+                <div class="results-grid">
+                    <div class="result-item">
+                        <div class="result-value" id="annualCost">$107,031</div>
+                        <div class="result-label">Annual cost of communication waste</div>
+                    </div>
+
+                    <div class="result-item">
+                        <div class="result-value" id="monthlyCost">$8,919</div>
+                        <div class="result-label">Monthly cost</div>
+                    </div>
+
+                    <div class="result-item">
+                        <div class="result-value" id="costPerEmployee">$4,281</div>
+                        <div class="result-label">Cost per employee annually</div>
+                    </div>
+
+                    <div class="result-item">
+                        <div class="result-value" id="hoursLost">1,302</div>
+                        <div class="result-label">Total hours lost annually</div>
+                    </div>
+                </div>
+
+                <div class="comparison-section">
+                    <h3 class="section-title">This Could Have Funded</h3>
+                    <div class="comparison-item">
+                        <span>New senior hires</span>
+                        <span id="newHires">1.8</span>
+                    </div>
+                    <div class="comparison-item">
+                        <span>Annual training budget</span>
+                        <span id="trainingBudget">$107k</span>
+                    </div>
+                    <div class="comparison-item">
+                        <span>Technology/tools budget</span>
+                        <span id="techBudget">$107k</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="warning-box">
+            <h3>Reality Check</h3>
+            <p>These numbers represent just the direct salary waste. Factor in cascading effects, client impact, and lost opportunities, and the true cost is likely 2-3x higher.</p>
+        </div>
+
+        <div class="input-section" style="margin-bottom: 2rem;">
+            <h2 class="section-title">Industry Type Multipliers Explained</h2>
+            
+            <div style="display: grid; gap: 1rem;">
+                <div class="result-item">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <strong>Healthcare (1.4x)</strong>
+                        <span style="color: #a1ff75;">Highest Risk</span>
+                    </div>
+                    <div class="result-label">Miscommunication can cost lives. Complex protocols, high-stress handoffs between specialists, and expensive specialized staff time.</div>
+                </div>
+
+                <div class="result-item">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <strong>Technology/Software (1.3x)</strong>
+                        <span style="color: #a1ff75;">High Impact</span>
+                    </div>
+                    <div class="result-label">Fast-paced environment where miscommunication kills sprint velocity. Complex technical concepts and remote teams amplify friction.</div>
+                </div>
+
+                <div class="result-item">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <strong>Consulting/Professional Services (1.2x)</strong>
+                        <span style="color: #a1ff75;">Client Risk</span>
+                    </div>
+                    <div class="result-label">Client-facing work where miscommunication damages relationships. High billable rates and reputation risk.</div>
+                </div>
+
+                <div class="result-item">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <strong>Finance/Insurance (1.1x)</strong>
+                        <span style="color: #a1ff75;">Compliance Cost</span>
+                    </div>
+                    <div class="result-label">Regulatory requirements demand precision. High-stakes decisions and complex products require careful communication.</div>
+                </div>
+
+                <div class="result-item">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <strong>General Business (1.0x)</strong>
+                        <span style="color: #b0b0b0;">Baseline</span>
+                    </div>
+                    <div class="result-label">Standard business environment with typical communication challenges and costs.</div>
+                </div>
+
+                <div class="result-item">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <strong>Manufacturing (0.9x)</strong>
+                        <span style="color: #b0b0b0;">Most Structured</span>
+                    </div>
+                    <div class="result-label">Process-driven communication with clear hierarchies. Physical processes provide clearer feedback loops.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>By <a href="https://www.linkedin.com/in/eriklens/" target="_blank">Erik Lens</a></p>
+    </div>
+
+    <script>
+        // Get all input elements
+        const dailyWaste = document.getElementById('dailyWaste');
+        const hourlyRate = document.getElementById('hourlyRate');
+        const numPeople = document.getElementById('numPeople');
+        const workingDays = document.getElementById('workingDays');
+        const industry = document.getElementById('industry');
+        const escalationToggle = document.getElementById('escalationToggle');
+        const opportunityToggle = document.getElementById('opportunityToggle');
+
+        // Get result elements
+        const annualCostEl = document.getElementById('annualCost');
+        const monthlyCostEl = document.getElementById('monthlyCost');
+        const costPerEmployeeEl = document.getElementById('costPerEmployee');
+        const hoursLostEl = document.getElementById('hoursLost');
+        const newHiresEl = document.getElementById('newHires');
+        const trainingBudgetEl = document.getElementById('trainingBudget');
+        const techBudgetEl = document.getElementById('techBudget');
+
+        // Toggle states
+        let escalationEnabled = true;
+        let opportunityEnabled = false;
+
+        // Toggle functionality
+        escalationToggle.addEventListener('click', () => {
+            escalationEnabled = !escalationEnabled;
+            escalationToggle.classList.toggle('active', escalationEnabled);
+            calculate();
+        });
+
+        opportunityToggle.addEventListener('click', () => {
+            opportunityEnabled = !opportunityEnabled;
+            opportunityToggle.classList.toggle('active', opportunityEnabled);
+            calculate();
+        });
+
+        // Format currency
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        // Format number
+        function formatNumber(num) {
+            return new Intl.NumberFormat('en-US').format(Math.round(num));
+        }
+
+        // Calculate costs
+        function calculate() {
+            const dailyMinutes = parseFloat(dailyWaste.value) || 0;
+            const hourlyRateValue = parseFloat(hourlyRate.value) || 0;
+            const people = parseInt(numPeople.value) || 0;
+            const days = parseInt(workingDays.value) || 250;
+            const industryMultiplier = parseFloat(industry.value) || 1.0;
+
+            // Base calculation
+            let dailyHours = dailyMinutes / 60;
+            
+            // Apply escalation multiplier (communication issues compound)
+            if (escalationEnabled) {
+                dailyHours *= 1.6; // 60% escalation factor
+            }
+
+            // Apply industry multiplier
+            dailyHours *= industryMultiplier;
+
+            // Calculate costs
+            const dailyCost = dailyHours * hourlyRateValue * people;
+            let annualCost = dailyCost * days;
+
+            // Add opportunity cost
+            if (opportunityEnabled) {
+                annualCost *= 1.4; // 40% opportunity cost multiplier
+            }
+
+            const monthlyCost = annualCost / 12;
+            const costPerEmployee = annualCost / people;
+            const totalHoursLost = dailyHours * people * days;
+
+            // Update display
+            annualCostEl.textContent = formatCurrency(annualCost);
+            monthlyCostEl.textContent = formatCurrency(monthlyCost);
+            costPerEmployeeEl.textContent = formatCurrency(costPerEmployee);
+            hoursLostEl.textContent = formatNumber(totalHoursLost);
+
+            // Comparisons
+            const avgSalary = 60000; // Average senior hire cost
+            newHiresEl.textContent = (annualCost / avgSalary).toFixed(1);
+            trainingBudgetEl.textContent = formatCurrency(annualCost);
+            techBudgetEl.textContent = formatCurrency(annualCost);
+        }
+
+        // Add event listeners to all inputs
+        [dailyWaste, hourlyRate, numPeople, workingDays, industry].forEach(input => {
+            input.addEventListener('input', calculate);
+        });
+
+        // Initial calculation
+        calculate();
+    </script>
+</body>
+</html>
